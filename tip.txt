@@ -1,0 +1,5 @@
+# eslint 检查
+yarn lint
+
+# prettier 自动格式化
+yarn prettier
