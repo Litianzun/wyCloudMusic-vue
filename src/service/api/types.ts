@@ -48,3 +48,6 @@ export interface IPlaylistDetailApi {
 export interface ISingersApi {
   list: (params: ISingersParams) => Promise<any>
 }
+// export interface ISinggerApi {
+//   list: (params: ISingersParams) => Promise<any>
+// }

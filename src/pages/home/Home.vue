@@ -103,7 +103,7 @@ export default defineComponent({
     Histogram,
     ToplistItem,
     SiderSinger,
-    SiderSinger
+    SiderSinger,
   },
   setup() {
     let router = useRouter()
