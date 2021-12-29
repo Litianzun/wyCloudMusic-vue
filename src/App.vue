@@ -22,4 +22,10 @@ import NavFooter from '@/components/navFooter/NavFooter.vue'
 .el-tabs--border-card>.el-tabs__content{
   padding: 0;
 }
+.el-input__prefix-inner{
+  align-items: center;
+}
+.el-input--prefix .el-input__inner{
+  padding-left: 20px;
+}
 </style>

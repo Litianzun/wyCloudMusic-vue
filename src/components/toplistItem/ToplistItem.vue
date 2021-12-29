@@ -37,7 +37,7 @@ export default defineComponent({
       required: true,
     },
     id: {
-      type: String,
+      type: Number || String,
       required: true,
     },
     bannerImg: {

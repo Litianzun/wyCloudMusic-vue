@@ -22,6 +22,10 @@ export interface IPlaylistDetailParams {
   id: string | number
   s?: number
 }
+export interface ISingersParams {
+  offset?: number
+  limit?: number
+}
 
 export interface ILoginApi {
   login: (params: ILoginParams) => Promise<any>
@@ -40,4 +44,7 @@ export interface IToplistApi {
 }
 export interface IPlaylistDetailApi {
   detail: (params: IPlaylistDetailParams) => Promise<any>
+}
+export interface ISingersApi {
+  list: (params: ISingersParams) => Promise<any>
 }

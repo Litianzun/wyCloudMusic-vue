@@ -72,7 +72,9 @@
           </div>
         </div>
       </div>
-      <aside class="side"></aside>
+      <aside class="side">
+        <sider-singer></sider-singer>
+      </aside>
     </div>
   </div>
 </template>
@@ -86,6 +88,7 @@ import newalbumRequest from '@/service/api/newalbum'
 import toplistRequest from '@/service/api/toplist'
 import TitleNav from '@/components/titleNav/TitleNav.vue'
 import ToplistItem from '@/components/toplistItem/ToplistItem.vue'
+import SiderSinger from '@/components/siderSinger/SiderSingers.vue'
 import _ from 'lodash'
 import { StarFilled, Histogram, Dessert, VideoPlay, Service } from '@element-plus/icons-vue'
 
@@ -99,6 +102,8 @@ export default defineComponent({
     Dessert,
     Histogram,
     ToplistItem,
+    SiderSinger,
+    SiderSinger
   },
   setup() {
     let router = useRouter()
