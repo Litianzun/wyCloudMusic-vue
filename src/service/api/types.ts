@@ -1,6 +1,13 @@
-export interface ILoginParams {
-  userName: string
-  passWord: string | number
+export interface ILoginPhoneParams {
+  phone: string | number
+  password: string
+  md5_password: string
+  captcha?: string | number
+}
+export interface ILoginEmailParams {
+  email: string
+  password: string
+  md5_password: string
 }
 export interface IBannerParams {
   type?: 0 | 1 | 2 | 3
@@ -26,9 +33,13 @@ export interface ISingersParams {
   offset?: number
   limit?: number
 }
+export interface IUserInfoParams{
+  uid: string | number
+}
 
 export interface ILoginApi {
-  login: (params: ILoginParams) => Promise<any>
+  login_phone: (params: ILoginPhoneParams) => Promise<any>
+  login_email: (params: ILoginEmailParams) => Promise<any>
 }
 export interface IBannerApi {
   list: (params: IBannerParams) => Promise<any>
@@ -48,6 +59,6 @@ export interface IPlaylistDetailApi {
 export interface ISingersApi {
   list: (params: ISingersParams) => Promise<any>
 }
-// export interface ISinggerApi {
-//   list: (params: ISingersParams) => Promise<any>
-// }
+export interface IUserApi {
+  info: (params: IUserInfoParams) => Promise<any>
+}

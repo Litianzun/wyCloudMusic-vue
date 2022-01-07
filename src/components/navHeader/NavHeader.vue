@@ -26,7 +26,7 @@
           </li>
         </ul>
       </nav>
-      <div>
+      <div class="right-content">
         <el-input
           v-model="searchInput"
           placeholder="音乐/视频/电台/用户"
@@ -34,7 +34,22 @@
           size="small"
           class="search-box"
         />
-        <span style="color: #fff; font-size: 14px; margin: 0 8px; cursor: pointer">登录</span>
+        <div v-if="store.profile" class="avatar">
+          <el-dropdown @command="handleCommand">
+            <img :src="store.profile.avatarUrl" alt="avatar" />
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="loggout" :icon="SwitchButton">退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+        <span
+          v-else
+          style="color: #fff; font-size: 14px; margin: 0 8px; cursor: pointer"
+          @click="readyLogin"
+          >登录</span
+        >
       </div>
     </header>
   </div>
@@ -43,21 +58,41 @@
 <script>
 import { defineComponent, ref } from '@vue/runtime-core'
 import { useRouter, useRoute } from 'vue-router'
-import { Search } from '@element-plus/icons-vue'
+import { Search, SwitchButton } from '@element-plus/icons-vue'
+import { useMainStore } from '@/store/main'
+import { delCookie } from '@/utils/cookie'
 
 export default defineComponent({
   name: 'navHeader',
   setup() {
+    let store = useMainStore()
+    console.log(store.profile)
     let activeIndex = ref(0)
     let switchActiveTab = (i) => {
       activeIndex.value = i
     }
     const searchInput = ref('') //搜索关键字
+    let readyLogin = () => {
+      store.switchLoginVisible(true)
+    }
+    const handleCommand = (command) => {
+      switch (command) {
+        case 'loggout': {
+          document.cookie = '';
+          delCookie('userId')
+          store.$reset()
+        }
+      }
+    }
     return {
       activeIndex,
       switchActiveTab,
       searchInput,
       Search,
+      SwitchButton,
+      store,
+      readyLogin,
+      handleCommand,
     }
   },
 })
@@ -86,10 +121,10 @@ export default defineComponent({
       color: #ede7e7;
       font-size: 21px;
       display: inline-block;
-      transform: translate(50px,5px);
+      transform: translate(50px, 5px);
       letter-spacing: 3px;
       text-decoration: none;
-      font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
   }
   .header-nav-box {
@@ -116,8 +151,23 @@ export default defineComponent({
       background-color: #000;
     }
   }
-  .search-box {
-    width: 162px;
+  .right-content {
+    display: flex;
+    align-items: center;
+    .search-box {
+      width: 162px;
+    }
+    .avatar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-left: 17px;
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+    }
   }
 }
 </style>
