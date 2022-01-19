@@ -21,6 +21,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .m-footer {
   position: relative;
+  width: 100%;
   height: 172px;
   overflow: hidden;
   border-top: 1px solid #d3d3d3;

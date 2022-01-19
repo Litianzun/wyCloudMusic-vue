@@ -66,7 +66,6 @@ export default defineComponent({
   name: 'navHeader',
   setup() {
     let store = useMainStore()
-    console.log(store.profile)
     let activeIndex = ref(0)
     let switchActiveTab = (i) => {
       activeIndex.value = i
@@ -78,9 +77,12 @@ export default defineComponent({
     const handleCommand = (command) => {
       switch (command) {
         case 'loggout': {
-          document.cookie = '';
           delCookie('userId')
-          store.$reset()
+          delCookie('_remember_me')
+          delCookie('_csrf')
+          delCookie('MUSIC_U')
+          store.$reset();
+          break;
         }
       }
     }

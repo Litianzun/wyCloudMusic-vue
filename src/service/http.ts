@@ -45,7 +45,7 @@ const http: Http = {
     return new Promise((resolve, reject) => {
       NProgress.start()
       axios
-        .get(url, { params })
+        .get(url, { params, withCredentials: true })
         .then((res) => {
           NProgress.done()
           resolve(res.data)

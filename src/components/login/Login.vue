@@ -59,7 +59,6 @@ export default defineComponent({
       })
     }
     let loginFunc = async () => {
-      //获取新碟
       try {
         const res = await loginRequest.login_phone({
           phone: form.phone,
@@ -72,6 +71,7 @@ export default defineComponent({
           // store.setAccount(res.account)
           document.cookie = res.cookie
           setCookie('userId', res.profile.userId, 15)
+          console.log(res.cookie,document.cookie)
           setTimeout(() => {
             window.location.reload()
           }, 300)
@@ -88,6 +88,7 @@ export default defineComponent({
       store,
       rules,
       toLogin,
+      loginFunc,
       loginFormRef,
     }
   },

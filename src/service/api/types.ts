@@ -33,8 +33,14 @@ export interface ISingersParams {
   offset?: number
   limit?: number
 }
-export interface IUserInfoParams{
+export interface IUserInfoParams {
   uid: string | number
+}
+export interface IUserPlaylistParams {
+  uid: string | number
+}
+export interface ISongParams {
+  id: string
 }
 
 export interface ILoginApi {
@@ -61,4 +67,8 @@ export interface ISingersApi {
 }
 export interface IUserApi {
   info: (params: IUserInfoParams) => Promise<any>
+  playlist: (params: IUserPlaylistParams) => Promise<any>
+}
+export interface ISongApi {
+  url: (params: ISongParams) => Promise<any>
 }

@@ -3,14 +3,16 @@
   <router-view />
   <nav-footer></nav-footer>
   <login />
+  <play-media></play-media>
 </template>
 
 <script setup lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import NavHeader from '@/components/navHeader/NavHeader.vue'
 import NavFooter from '@/components/navFooter/NavFooter.vue'
 import Login from '@/components/login/Login.vue'
+const PlayMedia = defineAsyncComponent(() => import('./components/playMedia/PlayMedia.vue'))
 </script>
 
 <style>
@@ -29,5 +31,13 @@ import Login from '@/components/login/Login.vue'
 }
 .el-input--prefix .el-input__inner {
   padding-left: 20px;
+}
+.f-thide {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  display: inline-block;
+  width: 100%;
 }
 </style>
