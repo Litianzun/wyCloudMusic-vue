@@ -25,7 +25,7 @@
               <img :src="item.picUrl" />
               <router-link :to="'/playlist?id=' + item.id" />
               <div class="bottom">
-                <video-play class="icon-play" title="播放"></video-play>
+                <video-play class="icon-play" title="播放" @click="toPlay(item.id)"></video-play>
                 <service class="icon-headset" />
                 <span class="nb">{{ formatPlayTimes(item.playCount) }}</span>
               </div>
@@ -86,9 +86,12 @@ import bannerRequest from '@/service/api/banner'
 import personalizedRequest from '@/service/api/personalized'
 import newalbumRequest from '@/service/api/newalbum'
 import toplistRequest from '@/service/api/toplist'
+import playlistRequest from '@/service/api/playlist'
 import TitleNav from '@/components/titleNav/TitleNav.vue'
 import ToplistItem from '@/components/toplistItem/ToplistItem.vue'
 import SiderSinger from '@/components/siderSinger/SiderSingers.vue'
+import { useMainStore } from '@/store/main'
+
 import _ from 'lodash'
 import { StarFilled, Histogram, Dessert, VideoPlay, Service } from '@element-plus/icons-vue'
 
@@ -108,6 +111,7 @@ export default defineComponent({
   setup() {
     let router = useRouter()
     let route = useRoute()
+    let store = useMainStore()
     let bannerData = ref(10) //轮播图数据需要给默认长度
     let personalizedData = ref([])
     let newAlbumData = ref(2)
@@ -179,6 +183,20 @@ export default defineComponent({
       let _nameArr = arr.map((item) => item.name)
       return _nameArr.join('/')
     }
+    let toPlay = async (id) => {
+      //歌单播放
+      try {
+        const detail = await playlistRequest.detail({ id: id })
+        console.log(detail)
+        if (detail.code === 200) {
+          let tracks = detail.playlist.tracks
+          localStorage.setItem('playlist', JSON.stringify(tracks))
+          store.setSong(tracks[0])
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
     onMounted(() => {
       getBanner()
       getPersonalized()
@@ -193,6 +211,7 @@ export default defineComponent({
       disk_autoplay,
       newAlbumData,
       toplistData,
+      toPlay,
     }
   },
 })

@@ -7,7 +7,7 @@
     }"
     @mouseleave="toHide"
     @mouseenter="toShow"
-    v-show="store.playSwitch"
+    v-show="mediaShow"
   >
     <div class="song-info-box">
       <h2 class="f-thide">{{ store.currentSong.name }}</h2>
@@ -27,20 +27,56 @@
       您的浏览器不支持audio标签
     </audio>
     <div className="player-toolBox">
-      <!-- <Popover content={renderPlaylist()} title="播放列表" trigger="click">
-          <UnorderedListOutlined style="font-size: 15px;" />
-        </Popover> -->
+      <!-- <el-popover placement="top-start" title="播放列表" :width="400" trigger="click"> -->
+      <el-icon><tickets @click="playlistShow = !playlistShow" /></el-icon>
+      <!-- <el-affix position="bottom" :offset="10" v-show="playlistShow"> -->
+      <el-table
+        :data="gridData"
+        size="small"
+        @row-dblclick="rowClick"
+        max-height="300"
+        row-class-name="black-row"
+        header-row-class-name="black-row"
+        cell-class-name="my-cell"
+        header-cell-class-name="black-row"
+        class="playlist-box"
+        v-show="playlistShow"
+      >
+        <el-table-column property="name" label="歌曲" width="220">
+          <template #default="scope">
+            <span class="f-thide" style="display: list-item">{{ scope.row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="歌手" width="120">
+          <template #default="scope">
+            <span class="f-thide" style="display: list-item">{{
+              creatorFormat(scope.row.ar || scope.row.artists)
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="时长" width="70">
+          <template #default="scope">
+            <span>{{ formatDt(scope.row.dt) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- </el-affix> -->
+      <!-- </el-popover> -->
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, onUpdated } from 'vue'
+import { defineComponent, onMounted, ref, onUpdated, computed, watch } from 'vue'
 import { useMainStore } from '@/store/main'
 import songRequest from '@/service/api/song'
+import { Tickets } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
 
 export default defineComponent({
-  components: {},
+  components: {
+    Tickets,
+  },
   props: {},
   setup() {
     let store = useMainStore()
@@ -48,23 +84,20 @@ export default defineComponent({
     console.log('歌曲信息', store.currentSong)
     let playState = ref(false)
     let hiddenFlag = ref(false)
+    let playlistShow = ref(false)
+    let mediaShow = computed(() => {
+      return store.currentSong ? store.currentSong.id : store.playSwitch
+    })
     onMounted(() => {
+      console.log('mounted')
       toShow()
       toHide()
       if (store.currentSong && store.currentSong.id) {
         getSongUrl()
       }
-      //存储到播放列表
-      //   const playlist = localStorage.getItem('playlist')
-      //   const newList = playlist ? JSON.parse(playlist) : []
-      //   const filterIndex = newList.findIndex((item2) => item2.id === song.id)
-      //   if (filterIndex == -1 && song.id) {
-      //     newList.push(song)
-      //   }
-      //   localStorage.setItem('playlist', JSON.stringify(newList))
     })
     onUpdated(() => {
-      console.log('updated', store.currentSong)
+      // console.log('updated', store.currentSong)
       if (store.currentSong && store.currentSong.id && !store.currentSong.url) {
         getSongUrl()
       }
@@ -93,7 +126,7 @@ export default defineComponent({
         const newList = playlist ? JSON.parse(playlist) : []
         const filterIndex = newList.findIndex((item) => item.id === store.currentSong.id) //当前播放的列表index
         if (!(newList.length === filterIndex + 1)) {
-          await getSong(newList[filterIndex + 1])
+          store.setSong(newList[filterIndex + 1])
         }
       }
     }
@@ -117,33 +150,25 @@ export default defineComponent({
         return arr.join('/')
       }
     }
-    //   function renderPlaylist() {
-    //     const list = localStorage.getItem("playlist");
-    //     return (
-    //       <div style={{ height: "300px", overflowY: "scroll" }}>
-    //         <List
-    //           dataSource={JSON.parse(list)}
-    //           renderItem={renderPlaylistItem}
-    //           itemLayout="vertical"
-    //           size="small"
-    //         />
-    //       </div>
-    //     );
-    //   }
-
-    //   function renderPlaylistItem() {
-    //     return (
-    //       <List.Item
-    //         onDoubleClick={async () => {
-    //           await getSong(item);
-    //         }}
-    //         extra={creatorFormat(item.ar || item.artists)}
-    //         style={{ backgroundColor: item.id === props.id ? "#eee" : "#fff" }}
-    //       >
-    //         {item.name}
-    //       </List.Item>
-    //     );
-    //   }
+    let list = localStorage.getItem('playlist')
+    let gridData = ref(JSON.parse(list))
+    watch(store, (newValue, oldValue) => {
+      //存储到播放列表
+      const playlist = localStorage.getItem('playlist')
+      const newList = playlist ? JSON.parse(playlist) : []
+      const filterIndex = newList.findIndex((item2) => item2.id === store.currentSong.id)
+      if (filterIndex == -1 && store.currentSong.id) {
+        newList.push(store.currentSong)
+      }
+      localStorage.setItem('playlist', JSON.stringify(newList))
+      gridData.value = newList
+    })
+    let formatDt = (time) => {
+      return dayjs(time).format('mm:ss')
+    }
+    let rowClick = (row, column, event) => {
+      store.setSong(row)
+    }
     return {
       setPlayState,
       handleEnd,
@@ -153,12 +178,29 @@ export default defineComponent({
       creatorFormat,
       store,
       hiddenFlag,
+      gridData,
+      formatDt,
+      rowClick,
+      playlistShow,
+      mediaShow,
     }
   },
 })
 </script>
 
 <style scoped lang="scss">
+.el-table {
+  --el-table-row-hover-bg-color: #f5f7fa6b;
+}
+.playlist-box {
+  position: absolute;
+  width: 410px;
+  bottom: 149px;
+  right: 80px;
+}
+.cell {
+  color: #fff;
+}
 .player {
   width: 100%;
   height: 130px;
@@ -170,6 +212,9 @@ export default defineComponent({
   bottom: 0em;
   display: flex;
   transition: transform 1s;
+  .black-row {
+    background-color: #555;
+  }
   .song-info-box {
     width: 250px;
     height: 58px;

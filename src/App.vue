@@ -4,6 +4,7 @@
   <nav-footer></nav-footer>
   <login />
   <play-media></play-media>
+  <el-backtop></el-backtop>
 </template>
 
 <script setup lang="ts">
@@ -39,5 +40,11 @@ const PlayMedia = defineAsyncComponent(() => import('./components/playMedia/Play
   word-wrap: normal;
   display: inline-block;
   width: 100%;
+}
+.black-row{
+  background-color: #555 !important;
+}
+.my-cell{
+  color: #fff;
 }
 </style>
